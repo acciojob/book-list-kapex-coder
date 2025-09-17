@@ -1,43 +1,76 @@
-document.addEventListener('DOMContentLoaded', function () {
-  const form = document.querySelector('form');
-  const titleInput = document.getElementById('title');
-  const authorInput = document.getElementById('author');
-  const isbnInput = document.getElementById('isbn');
-  const bookList = document.getElementById('book-list');
 
-  // handle submit
-  form.addEventListener('submit', function (e) {
-    e.preventDefault();
+let books = []
 
-    const title = titleInput.value.trim();
-    const author = authorInput.value.trim();
-    const isbn = isbnInput.value.trim();
+function addBook(title,isbn,author){
 
-    if (!title || !author || !isbn) {
-      alert('Please fill in all fields.');
-      return;
-    }
+  books.push({title,isbn,author})
+  updateTable({title,isbn,author})
+  saveToLocalStorage()
+}
 
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${title}</td>
-      <td>${author}</td>
-      <td>${isbn}</td>
-      <td><button class="btn btn-danger btn-sm delete">Clear</button></td>
-    `;
+function deleteBook(el) {
+  if(el.classList.contains('delete')) {
+    el.parentElement.parentElement.remove();
+  }
+}
 
-    bookList.appendChild(tr);
+document.querySelector('#book-list').addEventListener('click', (e) => {
+  // Remove book from UI
+  e.preventDefault();
 
-    // clear inputs
-    titleInput.value = "";
-    authorInput.value = "";
-    isbnInput.value = "";
-  });
+  deleteBook(e.target);
 
-  // handle delete
-  bookList.addEventListener('click', function (e) {
-    if (e.target.classList.contains('delete')) {
-      e.target.closest('tr').remove();
-    }
-  });
+  // Remove book from store
+  const isbn = e.target.parentElement.previousElementSibling.textContent;
+
+  books = books.filter(book=>book.isbn!==isbn)
+  saveToLocalStorage()
 });
+
+
+function updateTable(book){
+  const list = document.querySelector('#book-list');
+  
+  const row = document.createElement('tr');
+
+  row.innerHTML = `
+    <td>${book.title}</td>
+    <td>${book.author}</td>
+    <td>${book.isbn}</td>
+    <td><a href="#" class="btn btn-danger btn-sm delete">X</a></td>
+  `;
+
+  list.appendChild(row);
+
+}
+
+function saveToLocalStorage(){
+
+  localStorage.setItem('books1', JSON.stringify(books));
+}
+
+function getDataFromLocalStorage(){
+  if(localStorage.getItem('books1') === null) {
+    books = [];
+  } else {
+    books = JSON.parse(localStorage.getItem('books1'));
+
+    books.forEach(book=> updateTable(book))
+  }
+}
+
+
+document.querySelector('#submit').addEventListener("click",(e)=>{
+
+    e.preventDefault();
+  
+    // Get form values
+    const title = document.querySelector('#title').value;
+    const author = document.querySelector('#author').value;
+    const isbn = document.querySelector('#isbn').value;
+
+    addBook(title,isbn,author)
+
+})
+
+getDataFromLocalStorage()
