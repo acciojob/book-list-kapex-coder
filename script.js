@@ -4,9 +4,10 @@ document.addEventListener('DOMContentLoaded', function () {
   const isbnInput = document.getElementById('isbn');
   const btn = document.getElementById('submit');
   const bookList = document.getElementById('book-list');
+	const form = document.getElementById('book-form');
 
   // Add book
-  btn.addEventListener('click', function (e) {
+  form.addEventListener('submit', function (e) {
     e.preventDefault();
 
     const title = titleInput.value.trim();
