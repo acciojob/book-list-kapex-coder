@@ -1,12 +1,11 @@
 document.addEventListener('DOMContentLoaded', function () {
+  const form = document.querySelector('form');
   const titleInput = document.getElementById('title');
   const authorInput = document.getElementById('author');
   const isbnInput = document.getElementById('isbn');
-  const btn = document.getElementById('submit');
   const bookList = document.getElementById('book-list');
-	const form = document.getElementById('book-form');
 
-  // Add book
+  // handle submit
   form.addEventListener('submit', function (e) {
     e.preventDefault();
 
@@ -35,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     isbnInput.value = "";
   });
 
-  // Delete book (only one listener, outside submit)
+  // handle delete
   bookList.addEventListener('click', function (e) {
     if (e.target.classList.contains('delete')) {
       e.target.closest('tr').remove();
